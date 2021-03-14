@@ -1,17 +1,20 @@
 package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import web.entity.Role;
 import web.entity.User;
 import web.service.RoleService;
 import web.service.UserService;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @Controller
@@ -20,11 +23,14 @@ public class AdminController {
 
     private final UserService userService;
     private final RoleService roleService;
+    private final PasswordEncoder passwordEncoder;
+
 
     @Autowired
-    public AdminController(UserService userService, RoleService roleService) {
+    public AdminController(UserService userService, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @GetMapping()
@@ -64,7 +70,11 @@ public class AdminController {
     }
 
     @PostMapping("/user-update")
-    public String updateUser(User user) {
+    public String updateUser(@RequestParam(value = "password") String password, User user) {
+        if (passwordEncoder.matches(password, user.getPassword())){
+            userService.update(user);
+        }
+        user.setPassword(passwordEncoder.encode(password));
         userService.update(user);
         return "redirect:/admin";
     }

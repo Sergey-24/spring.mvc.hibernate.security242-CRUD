@@ -23,7 +23,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
             httpServletResponse.sendRedirect("/admin");
         }
         else {
-            httpServletResponse.sendRedirect("/hello");
+            httpServletResponse.sendRedirect("user/hello");
         }
 
     }

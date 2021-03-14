@@ -2,15 +2,11 @@ package web.entity;
 
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
+
 
 @Entity
 @Table(name = "users")
@@ -20,7 +16,7 @@ public class User implements UserDetails {
     @Column(name = "id")
     private long id;
 
-    @Column(name = "name")
+    @Column(name = "username")
     private String firstName;
 
     @Column(name = "last_name")
@@ -36,21 +32,13 @@ public class User implements UserDetails {
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"),
+    @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
     public User() {
     }
 
-    public void setRoles(String roles) {
-        if (roles.contains("ADMIN")) {
-            this.roles.add(new Role("ROLE_ADMIN"));
-        }
-        if (roles.contains("USER")) {
-            this.roles.add(new Role("ROLE_USER"));
-        }
-    }
 
     public User(String firstName, String lastName, int age, String address, Set<Role> roles) {
         this.firstName = firstName;
@@ -60,10 +48,9 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public User(String firstName, String password, Set<Role> roles) {
+    public User(String firstName, String password) {
         this.firstName = firstName;
         this.password = password;
-        this.roles = roles;
     }
 
     public Long getId() {
@@ -106,21 +93,6 @@ public class User implements UserDetails {
         this.address = address;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
 
     @Override
     public String toString() {
@@ -144,6 +116,11 @@ public class User implements UserDetails {
     }
 
     @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -161,6 +138,18 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
 }
