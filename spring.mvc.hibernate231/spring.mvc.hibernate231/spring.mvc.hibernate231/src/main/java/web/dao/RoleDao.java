@@ -11,4 +11,5 @@ public interface RoleDao {
 
     Set<Role> findAllRoles();
 
+    void saveRole(Role role);
 }

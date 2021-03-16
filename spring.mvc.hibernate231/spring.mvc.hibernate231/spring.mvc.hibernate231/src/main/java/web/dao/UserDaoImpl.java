@@ -1,13 +1,13 @@
 package web.dao;
 
-
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import web.entity.Role;
 import web.entity.User;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-
 
 @Repository
 public class UserDaoImpl implements UserDao {
@@ -15,6 +15,18 @@ public class UserDaoImpl implements UserDao {
     @PersistenceContext
     EntityManager entityManager;
 
+    private PasswordEncoder passwordEncoder;
+    private RoleDao roleDao;
+
+    @Autowired
+    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setRoleDao(RoleDao roleDao) {
+        this.roleDao = roleDao;
+    }
 
     @Override
     public List<User> getAllUsers() {
@@ -25,7 +37,15 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void saveUser(User user) {
+    public void saveUser(User user , String password) {
+        for (Role userRole : user.getRoles()) {
+            for (Role role : roleDao.findAllRoles()) {
+                if (role.getAuthority().equals(userRole.getAuthority())) {
+                    userRole.setId(role.getId());
+                }
+            }
+        }
+        user.setPassword(passwordEncoder.encode(password));
         entityManager.persist(user);
     }
 
@@ -41,7 +61,19 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void update(User user) {
+    public void update(User user, String password) {
+        for (Role userRole : user.getRoles()) {
+            for (Role role : roleDao.findAllRoles()) {
+                if (role.getAuthority().equals(userRole.getAuthority())) {
+                    userRole.setId(role.getId());
+                }
+            }
+        }
+        if (!passwordEncoder.matches(passwordEncoder.encode(password), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(password));
+        } else {
+            user.setPassword(password);
+        }
         entityManager.merge(user);
     }
 

@@ -17,6 +17,12 @@
     <label for="password">password</label>
     <input type="text" th:field="*{password}" id="password" placeholder="password">
     <label>
+        <select multiple required size="2" th:name="roles" th:field="*{roles}">
+            <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
+        </select>
+    </label>
+
+    <label>
         <p><input type="submit" value="addNewUser"></p>
         <p><a th:href="@{/logout}">Logout</a></p>
     </label>

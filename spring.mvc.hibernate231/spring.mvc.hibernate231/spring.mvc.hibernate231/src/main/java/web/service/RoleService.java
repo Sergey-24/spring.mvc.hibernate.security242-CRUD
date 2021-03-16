@@ -9,4 +9,5 @@ public interface RoleService {
 
     Set<Role> findAllRoles();
 
+    void saveRole(Role role);
 }

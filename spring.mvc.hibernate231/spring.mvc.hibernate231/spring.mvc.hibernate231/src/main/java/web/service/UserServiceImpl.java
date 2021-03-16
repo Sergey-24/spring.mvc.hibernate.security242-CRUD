@@ -1,11 +1,18 @@
 package web.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.dao.UserDao;
+import web.entity.Role;
 import web.entity.User;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -25,8 +32,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUser(User user) {
-        userDao.saveUser(user);
+    public void saveUser(User user, String password) {
+        userDao.saveUser(user, password);
     }
 
     @Override
@@ -43,8 +50,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void update(User user) {
-        userDao.update(user);
+    public void update(User user, String password) {
+        userDao.update(user, password);
     }
 
     @Override
@@ -53,5 +60,19 @@ public class UserServiceImpl implements UserService {
         return userDao.findByUsername(username);
     }
 
+    @Override
+    @Transactional
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userDao.findByUsername(username);
+        if (user == null) {
+            throw new UsernameNotFoundException(user.getUsername() + " not found");
+        }
+        return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword()
+                , convRoles(user.getRoles()));
+    }
+
+    private Collection<? extends GrantedAuthority> convRoles(Collection<Role> roles) {
+        return roles.stream().map(x -> new SimpleGrantedAuthority(x.getUsername())).collect(Collectors.toList());
+    }
 }
 

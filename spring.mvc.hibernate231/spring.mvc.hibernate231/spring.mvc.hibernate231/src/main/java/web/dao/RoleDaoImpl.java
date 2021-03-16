@@ -16,11 +16,10 @@ public class RoleDaoImpl implements RoleDao{
 
     @Override
     public Set<Role> getRoles(Set<String> role) {
-        return new HashSet<>(entityManager.createQuery("SELECT r FROM Role r WHERE r.name in (:role)")
+        return new HashSet<>(entityManager.createQuery("SELECT r FROM Role r WHERE r.username in (:role)")
                 .setParameter("role", role)
                 .getResultList());
     }
-
 
     @Override
     public Set<Role> findAllRoles() {
@@ -28,4 +27,8 @@ public class RoleDaoImpl implements RoleDao{
                 .getResultList());
     }
 
+    @Override
+    public void saveRole(Role role) {
+        entityManager.persist(role);
+    }
 }
