@@ -1,12 +1,8 @@
 package web.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import web.entity.Role;
@@ -14,10 +10,10 @@ import web.entity.User;
 import web.service.RoleService;
 import web.service.UserService;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 @Controller
+@Transactional
 @RequestMapping("/admin")
 public class AdminController {
 
@@ -47,21 +43,21 @@ public class AdminController {
     }
 
     @PostMapping(value = "/addNewUser")
-    public String saveUser(User user, String password) {
-        userService.saveUser(user, password);
+    public String saveUser(User user) {
+        userService.saveUserByUser(user);
         return "redirect:/admin";
     }
 
 
     @GetMapping("/user-delete/{id}")
     public String deleteUser(@PathVariable("id") Long id) {
-        userService.delete(id);
+        userService.deleteUserById(id);
         return "redirect:/admin";
     }
 
     @GetMapping("/user-update/{id}")
     public String updateUserForm(@PathVariable("id") Long id, Model model) {
-        User user = userService.findUser(id);
+        User user = userService.findUserById(id);
         Set<Role> roles = roleService.findAllRoles();
         model.addAttribute("user", user);
         model.addAttribute("roles", roles);
@@ -69,8 +65,8 @@ public class AdminController {
     }
 
     @PostMapping("/user-update")
-    public String updateUser(String password, User user) {
-        userService.update(user, password);
+    public String updateUser(User user) {
+        userService.updateUserByUser(user);
         return "redirect:/admin";
     }
 }

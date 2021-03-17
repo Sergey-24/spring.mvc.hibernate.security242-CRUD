@@ -23,12 +23,12 @@ import javax.sql.DataSource;
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService userDetailsService;
     private final LoginSuccessHandler successUserHandler;
+    private final UserDetailsService userDetailsService;
 
-    public SecurityConfig(UserDetailsService userDetailsService, LoginSuccessHandler successUserHandler) {
-        this.userDetailsService = userDetailsService;
+    public SecurityConfig(LoginSuccessHandler successUserHandler, UserDetailsService userDetailsService) {
         this.successUserHandler = successUserHandler;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override

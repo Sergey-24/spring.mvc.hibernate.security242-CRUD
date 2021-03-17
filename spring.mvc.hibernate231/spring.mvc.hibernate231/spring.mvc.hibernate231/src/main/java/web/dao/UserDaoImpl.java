@@ -1,7 +1,6 @@
 package web.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
 import web.entity.Role;
 import web.entity.User;
@@ -15,13 +14,7 @@ public class UserDaoImpl implements UserDao {
     @PersistenceContext
     EntityManager entityManager;
 
-    private PasswordEncoder passwordEncoder;
     private RoleDao roleDao;
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @Autowired
     public void setRoleDao(RoleDao roleDao) {
@@ -37,7 +30,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void saveUser(User user , String password) {
+    public void saveUserByUser(User user) {
         for (Role userRole : user.getRoles()) {
             for (Role role : roleDao.findAllRoles()) {
                 if (role.getAuthority().equals(userRole.getAuthority())) {
@@ -45,23 +38,22 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         }
-        user.setPassword(passwordEncoder.encode(password));
         entityManager.persist(user);
     }
 
     @Override
-    public void delete(Long id) {
+    public void deleteUserById(Long id) {
         User user = entityManager.find(User.class, id);
         entityManager.remove(user);
     }
 
     @Override
-    public User findUser(Long id) {
+    public User findUserById(Long id) {
         return entityManager.find(User.class, id);
     }
 
     @Override
-    public void update(User user, String password) {
+    public void updateUserByUser(User user) {
         for (Role userRole : user.getRoles()) {
             for (Role role : roleDao.findAllRoles()) {
                 if (role.getAuthority().equals(userRole.getAuthority())) {
@@ -69,16 +61,11 @@ public class UserDaoImpl implements UserDao {
                 }
             }
         }
-        if (!passwordEncoder.matches(passwordEncoder.encode(password), user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(password));
-        } else {
-            user.setPassword(password);
-        }
         entityManager.merge(user);
     }
 
     @Override
-    public User findByUsername(String name) {
+    public User findUserByUsername(String name) {
         User user = entityManager.createQuery("SELECT u from User u WHERE u.firstName = :name", User.class).
                 setParameter("name", name).getSingleResult();
         return user;
