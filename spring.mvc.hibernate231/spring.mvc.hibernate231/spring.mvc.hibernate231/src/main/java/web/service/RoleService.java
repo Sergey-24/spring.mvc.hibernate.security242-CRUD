@@ -5,7 +5,7 @@ import web.entity.Role;
 import java.util.Set;
 
 public interface RoleService {
-    Set<Role> getRoles(Set<String> role);
+    Role getRoles(String role);
 
     Set<Role> findAllRoles();
 

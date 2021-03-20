@@ -23,21 +23,12 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        List<User> allUsers = entityManager.createQuery("from User"
-                , User.class).getResultList();
-
-        return allUsers;
+        return entityManager.createQuery("select distinct u from User u join fetch u.roles")
+                .getResultList();
     }
 
     @Override
     public void saveUserByUser(User user) {
-        for (Role userRole : user.getRoles()) {
-            for (Role role : roleDao.findAllRoles()) {
-                if (role.getAuthority().equals(userRole.getAuthority())) {
-                    userRole.setId(role.getId());
-                }
-            }
-        }
         entityManager.persist(user);
     }
 
@@ -54,21 +45,14 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public void updateUserByUser(User user) {
-        for (Role userRole : user.getRoles()) {
-            for (Role role : roleDao.findAllRoles()) {
-                if (role.getAuthority().equals(userRole.getAuthority())) {
-                    userRole.setId(role.getId());
-                }
-            }
-        }
         entityManager.merge(user);
     }
 
     @Override
     public User findUserByUsername(String name) {
-        User user = entityManager.createQuery("SELECT u from User u WHERE u.firstName = :name", User.class).
-                setParameter("name", name).getSingleResult();
-        return user;
-
+        return entityManager
+                .createQuery("select u from User u join fetch u.roles where u.firstName = :name", User.class)
+                .setParameter("name", name)
+                .getSingleResult();
     }
 }

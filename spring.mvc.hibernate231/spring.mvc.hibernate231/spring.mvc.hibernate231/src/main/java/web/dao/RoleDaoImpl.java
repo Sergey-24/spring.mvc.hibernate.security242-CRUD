@@ -1,7 +1,6 @@
 package web.dao;
 
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 import web.entity.Role;
 
 import javax.persistence.EntityManager;
@@ -16,15 +15,17 @@ public class RoleDaoImpl implements RoleDao{
     EntityManager entityManager;
 
     @Override
-    public Set<Role> getRoles(Set<String> role) {
-        return new HashSet<>(entityManager.createQuery("SELECT r FROM Role r WHERE r.username in (:role)")
+    public Role getRoles(String role) {
+        return entityManager.createQuery("select r from Role r join fetch r.users WHERE r.role = :role", Role.class)
                 .setParameter("role", role)
-                .getResultList());
+                .getSingleResult();
     }
 
     @Override
     public Set<Role> findAllRoles() {
-        return new HashSet<>(entityManager.createQuery("SELECT r from Role r", Role.class)
+//        return new HashSet<>(entityManager.createQuery("SELECT r from Role r", Role.class)
+//                .getResultList());
+        return new HashSet<>(entityManager.createQuery("select distinct r from Role r join fetch r.users")
                 .getResultList());
     }
 

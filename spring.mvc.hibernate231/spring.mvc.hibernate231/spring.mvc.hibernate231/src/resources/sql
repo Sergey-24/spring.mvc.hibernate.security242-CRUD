@@ -1,0 +1,25 @@
+create table security_schema.users (
+  id                    bigint not null AUTO_INCREMENT PRIMARY KEY,
+  username              varchar(30) not null, unique (id),
+  last_name             varchar(30) not null,
+  age                   int,
+  address               varchar(30) not null,
+  password              varchar(255)
+
+  )  ENGINE = InnoDB;
+
+create table security_schema.roles (
+  id                        bigint not null AUTO_INCREMENT PRIMARY KEY,
+  roles                  varchar(50) not null
+
+) ENGINE = InnoDB;
+
+CREATE TABLE security_schema.users_roles (
+ user_id BIGINT NOT NULL,
+    role_id BIGINT NOT NULL,
+
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (role_id) REFERENCES roles (id),
+
+    UNIQUE (user_id, role_id)
+) ENGINE = InnoDB;
