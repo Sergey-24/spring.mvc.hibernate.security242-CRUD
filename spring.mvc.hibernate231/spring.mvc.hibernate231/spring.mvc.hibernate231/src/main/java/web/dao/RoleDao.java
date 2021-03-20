@@ -1,7 +1,6 @@
 package web.dao;
 
 import web.entity.Role;
-import web.entity.User;
 
 import java.util.Set;
 

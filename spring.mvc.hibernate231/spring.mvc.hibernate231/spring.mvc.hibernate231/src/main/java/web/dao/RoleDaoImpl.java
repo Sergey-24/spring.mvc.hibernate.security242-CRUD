@@ -23,8 +23,6 @@ public class RoleDaoImpl implements RoleDao{
 
     @Override
     public Set<Role> findAllRoles() {
-//        return new HashSet<>(entityManager.createQuery("SELECT r from Role r", Role.class)
-//                .getResultList());
         return new HashSet<>(entityManager.createQuery("select distinct r from Role r join fetch r.users")
                 .getResultList());
     }

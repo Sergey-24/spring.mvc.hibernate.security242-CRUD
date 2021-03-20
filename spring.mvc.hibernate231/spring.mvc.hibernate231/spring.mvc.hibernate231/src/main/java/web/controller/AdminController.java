@@ -59,7 +59,7 @@ public class AdminController {
     public String updateUserForm(@PathVariable("id") Long id, Model model) {
         User user = userService.findUserById(id);
         model.addAttribute("user", user);
-        model.addAttribute("roles", user.getRoles());
+        model.addAttribute("roles", roleService.findAllRoles());
         return "admin/user-update";
     }
 

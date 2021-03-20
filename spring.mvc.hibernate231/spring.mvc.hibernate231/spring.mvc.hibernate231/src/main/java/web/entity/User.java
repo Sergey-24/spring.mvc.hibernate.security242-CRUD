@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 
 
@@ -42,7 +41,6 @@ public class User implements UserDetails {
 
     public User() {
     }
-
 
     public User(String firstName, String lastName, int age, String address, Set<Role> roles) {
         this.firstName = firstName;
@@ -96,9 +94,6 @@ public class User implements UserDetails {
     public void setAddress(String address) {
         this.address = address;
     }
-
-
-
 
     @Override
     public String toString() {

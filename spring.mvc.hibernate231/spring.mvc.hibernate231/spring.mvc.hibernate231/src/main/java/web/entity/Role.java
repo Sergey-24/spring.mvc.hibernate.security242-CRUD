@@ -23,7 +23,6 @@ public class Role implements GrantedAuthority {
     private Set<User> users;
 
     public Role() {
-
     }
 
     public Long getId() {
@@ -50,10 +49,8 @@ public class Role implements GrantedAuthority {
         this.users = users;
     }
 
-
     public Role(String role) {
         this.role = role;
-
     }
 
     @Override

@@ -11,7 +11,8 @@ import web.entity.User;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private UserService userService;;
+    private UserService userService;
+    ;
 
     @Autowired
     public void setUserService(UserService userService) {

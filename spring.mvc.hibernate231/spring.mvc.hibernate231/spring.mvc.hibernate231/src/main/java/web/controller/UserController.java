@@ -14,7 +14,6 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-
     private final UserService userService;
     private final RoleService roleService;
 
@@ -23,7 +22,6 @@ public class UserController {
         this.userService = userService;
         this.roleService = roleService;
     }
-
 
     @GetMapping()
     public String showUsersForUser(Model model) {
