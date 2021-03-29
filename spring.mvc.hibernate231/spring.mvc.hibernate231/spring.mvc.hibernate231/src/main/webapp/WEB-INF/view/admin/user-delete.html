@@ -4,7 +4,7 @@
 <title>Update user</title>
 </head>
 <body>
-<form action="#" th:action="@{/admin/user-update}" th:object="${user}" method="post">
+<form action="#" th:action="@{/admin/user-delete}" th:object="${user}" method="post">
     <label for="id">ID</label>
     <input readonly type="number" th:field="*{id}" id="id" placeholder="ID">
     <label for="firstName">First name</label>
@@ -27,9 +27,7 @@
             <option th:each="role : ${roles}" th:value="${role}" th:text="${role}"></option>
         </select>
     </label>
-
-    <input type="submit" value="Update User">
-    <p><a th:href="@{/logout}">Logout</a></p>
+    <input type="submit" value="Delete User">
 </form>
 </body>
 </html>

@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.dao.RoleDao;
 import web.entity.Role;
-import java.util.Set;
+import java.util.List;
+
 
 
 @Service
@@ -20,13 +21,13 @@ public class RoleServiceImpl implements RoleService {
 
    @Override
    @Transactional
-   public Role getRoles(String role) {
+   public List<Role> getRoles(String role) {
       return roleDao.getRoles(role);
    }
 
    @Override
    @Transactional
-   public Set<Role> findAllRoles() {
+   public List<Role> findAllRoles() {
       return roleDao.findAllRoles();
    }
 
@@ -34,5 +35,11 @@ public class RoleServiceImpl implements RoleService {
    @Transactional
    public void saveRole(Role role) {
       roleDao.saveRole(role);
+   }
+
+   @Override
+   @Transactional
+   public Role findRoleById(String rolename) {
+      return roleDao.findRoleByName(rolename);
    }
 }

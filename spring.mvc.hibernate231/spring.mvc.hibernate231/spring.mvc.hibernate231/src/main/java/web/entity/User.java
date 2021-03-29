@@ -1,13 +1,12 @@
 package web.entity;
 
 
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import javax.persistence.*;
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
+
 
 
 @Entity
@@ -33,16 +32,17 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY)
-    @Fetch(value = FetchMode.JOIN)
+    @ManyToMany(fetch = FetchType.LAZY
+            , cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.DETACH
+    ,CascadeType.REFRESH})
     @JoinTable(name = "users_roles", joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+    private List<Role> roles;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, int age, String address, Set<Role> roles) {
+    public User(String firstName, String lastName, int age, String address, List<Role> roles) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.age = age;
@@ -50,9 +50,9 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public User(String firstName, String password) {
-        this.firstName = firstName;
+    public User(String password, List<Role> roles) {
         this.password = password;
+        this.roles = roles;
     }
 
     public Long getId() {
@@ -145,13 +145,17 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
+    public List<Role> getRoles() {
         return roles;
     }
 
-    public void setRoles(Set<Role> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = roles;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
 }
 

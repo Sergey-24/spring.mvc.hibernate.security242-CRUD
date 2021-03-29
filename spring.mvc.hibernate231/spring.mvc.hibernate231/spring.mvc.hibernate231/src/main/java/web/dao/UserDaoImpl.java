@@ -2,10 +2,11 @@ package web.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import web.entity.Role;
 import web.entity.User;
 import javax.persistence.EntityManager;
+import javax.persistence.Parameter;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.List;
 
 @Repository
@@ -28,7 +29,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void saveUserByUser(User user) {
+    public void saveUser(User user) {
         entityManager.persist(user);
     }
 
@@ -40,11 +41,15 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User findUserById(Long id) {
-        return entityManager.find(User.class, id);
+        return entityManager
+                .createQuery("select u from User u join fetch u.roles where u.id = :id", User.class)
+                .setParameter("id", id)
+                .getSingleResult();
+//                entityManager.find(User.class, id);
     }
 
     @Override
-    public void updateUserByUser(User user) {
+    public void updateUser(User user) {
         entityManager.merge(user);
     }
 
@@ -54,5 +59,15 @@ public class UserDaoImpl implements UserDao {
                 .createQuery("select u from User u join fetch u.roles where u.firstName = :name", User.class)
                 .setParameter("name", name)
                 .getSingleResult();
+    }
+
+    @Override
+    public String findPassword(User user) {
+        Query query = entityManager
+                .createQuery("select u.password from User u where u.firstName = :name")
+                .setParameter("name", user.getFirstName());
+        System.out.println((String) query.getSingleResult());
+
+        return (String)query.getSingleResult();
     }
 }

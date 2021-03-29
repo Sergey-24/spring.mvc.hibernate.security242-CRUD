@@ -9,8 +9,9 @@ import web.entity.Role;
 import web.entity.User;
 import web.service.RoleService;
 import web.service.UserService;
+
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Controller
 @Transactional
@@ -35,23 +36,34 @@ public class AdminController {
 
     @GetMapping("/addNewUser")
     public String addNewUser(Model model) {
-        Set<Role> roleSet = roleService.findAllRoles();
         User user = new User();
         model.addAttribute("user", user);
-        model.addAttribute("roles", roleSet);
+        model.addAttribute("roles", roleService.findAllRoles());
         return "admin/user-creat";
     }
 
-    @PostMapping(value = "/addNewUser")
-    public String saveUser(User user) {
-        userService.saveUserByUser(user);
+    @PostMapping("/addNewUser")
+    public String saveUser(@RequestParam List<String> roles, User user) {
+        List<Role> roleList = new ArrayList<>();
+        for(String a: roles){
+            roleList.add(roleService.findRoleById(a));
+        }
+        user.setRoles(roleList);
+        userService.saveUser(user);
         return "redirect:/admin";
     }
 
-
     @GetMapping("/user-delete/{id}")
-    public String deleteUser(@PathVariable("id") Long id) {
-        userService.deleteUserById(id);
+    public String deleteUserFrom(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("user", userService.findUserById(id));
+        model.addAttribute("roles", roleService.findAllRoles());
+        return "admin/user-delete";
+    }
+
+    @PostMapping("/user-delete")
+    public String deleteUser(User user) {
+
+        userService.deleteUserById(user.getId());
         return "redirect:/admin";
     }
 
@@ -64,8 +76,14 @@ public class AdminController {
     }
 
     @PostMapping("/user-update")
-    public String updateUser(User user) {
-        userService.updateUserByUser(user);
+    public String updateUser(@RequestParam List<String> roles, @RequestParam String password
+            , User user) {
+        List<Role> roleList = new ArrayList<>();
+        for(String a: roles){
+            roleList.add(roleService.findRoleById(a));
+        }
+        user.setRoles(roleList);
+        userService.updateUser(user, password);
         return "redirect:/admin";
     }
 }

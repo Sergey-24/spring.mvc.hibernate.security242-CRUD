@@ -2,12 +2,16 @@ package web.service;
 
 
 import web.entity.Role;
+
+import java.util.List;
 import java.util.Set;
 
 public interface RoleService {
-    Role getRoles(String role);
+    List<Role> getRoles(String role);
 
-    Set<Role> findAllRoles();
+    List<Role> findAllRoles();
 
     void saveRole(Role role);
+
+    public Role findRoleById(String rolename);
 }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import web.dao.UserDao;
 import web.entity.User;
+
 import java.util.List;
 
 
@@ -14,6 +15,12 @@ public class UserServiceImpl implements UserService {
 
     private UserDao userDao;
     private PasswordEncoder passwordEncoder;
+    private RoleService roleService;
+
+    @Autowired
+    public void setRoleService(RoleService roleService) {
+        this.roleService = roleService;
+    }
 
     @Autowired
     public void setUserDao(UserDao userDao) {
@@ -33,9 +40,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void saveUserByUser(User user) {
+    public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userDao.saveUserByUser(user);
+        user.getRoles().get(0);
+        userDao.saveUser(user);
     }
 
     @Override
@@ -52,13 +60,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateUserByUser(User user) {
-        if (!passwordEncoder.matches(passwordEncoder.encode(user.getPassword()), user.getPassword())) {
+    public void updateUser(User user, String newpassword) {
+        if (!passwordEncoder.matches(newpassword, userDao.findPassword(user))) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-        } else {
-            user.setPassword(user.getPassword());
         }
-        userDao.updateUserByUser(user);
+        userDao.updateUser(user);
     }
 
     @Override
@@ -68,4 +74,6 @@ public class UserServiceImpl implements UserService {
     }
 
 }
+
+
 
