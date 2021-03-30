@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void updateUser(User user, String newpassword) {
         if (!passwordEncoder.matches(newpassword, userDao.findPassword(user))) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            user.setPassword(passwordEncoder.encode(newpassword));
         }
         userDao.updateUser(user);
     }
